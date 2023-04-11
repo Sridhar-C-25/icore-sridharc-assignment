@@ -73,11 +73,14 @@ router.delete("/tasks/:id", (req, res) => {
 // Filter tasks by completion status
 router.get("/tasks/:completed", (req, res) => {
   const { completed } = req.params;
-  const query = `
-      SELECT * FROM tasks
-      WHERE completed = ?
-    `;
-  db.all(query, [completed], (err, rows) => {
+  console.log(completed);
+  let query = "SELECT * FROM tasks";
+
+  // If completed query parameter is present, filter by completed status
+  if (completed !== undefined) {
+    query += ` WHERE completed = ${completed}`;
+  }
+  db.all(query, (err, rows) => {
     if (err) {
       console.error(err.message);
       res.status(500).json({ message: "Server error." });

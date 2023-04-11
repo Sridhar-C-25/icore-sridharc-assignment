@@ -107,6 +107,17 @@ const App = () => {
       });
   };
 
+  const onFilter = (status) => {
+    console.log(status);
+    newRequest("/tasks/" + status)
+      .then((res) => {
+        if (res.status === 200) {
+          setTasks(res.data);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className="max-w-5xl mx-auto">
       <h1 className="text-xl text-center mt-5 font-semibold">Task App</h1>
@@ -153,45 +164,67 @@ const App = () => {
       </form>
       <div className="mt-6">
         {tasks?.length ? (
-          <ul className="flex flex-col gap-2 divide-y">
-            <li className="flex justify-center  mx-auto ">
-              <span>Title</span>
-              <span>Description</span>
-              <span>status</span>
-              <span>Todos Actions</span>
-            </li>
-            {tasks?.map((todo) => {
-              return (
-                <li key={todo?.id} className=" flex justify-center  mx-auto">
-                  <span>{todo?.title}</span>
-                  <span>{todo?.description}</span>
-                  <span>{todo?.completed ? "completed" : "Not Completed"}</span>
-                  <span>
-                    <button
-                      className="text-red-600 mr-5"
-                      onClick={() => onDelete(todo?.id)}
-                    >
-                      Delete
-                    </button>
-                    <button
-                      className="text-teal-500"
-                      onClick={() => {
-                        setEdit(true);
-                        setTask({
-                          title: todo.title,
-                          description: todo.description,
-                          completed: todo.completed,
-                          id: todo?.id,
-                        });
-                      }}
-                    >
-                      Edit
-                    </button>
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
+          <>
+            <div className="flex gap-2 max-w-xl mx-auto mb-4">
+              <input
+                type="radio"
+                id="complete"
+                value={1}
+                name="status"
+                onChange={(e) => onFilter(e.target.value)}
+              />
+              <label htmlFor="complete">completed</label>
+              <input
+                type="radio"
+                id="incomplete"
+                value={0}
+                name="status"
+                onChange={(e) => onFilter(e.target.value)}
+              />
+              <label htmlFor="incomplete">incompleted</label>
+            </div>
+            <ul className="flex flex-col gap-2 divide-y">
+              <li className="flex justify-center  mx-auto ">
+                <span>Title</span>
+                <span>Description</span>
+                <span>status</span>
+                <span>Todos Actions</span>
+              </li>
+              {tasks?.map((todo) => {
+                return (
+                  <li key={todo?.id} className=" flex justify-center  mx-auto">
+                    <span>{todo?.title}</span>
+                    <span>{todo?.description}</span>
+                    <span>
+                      {todo?.completed ? "completed" : "Not Completed"}
+                    </span>
+                    <span>
+                      <button
+                        className="text-red-600 mr-5"
+                        onClick={() => onDelete(todo?.id)}
+                      >
+                        Delete
+                      </button>
+                      <button
+                        className="text-teal-500"
+                        onClick={() => {
+                          setEdit(true);
+                          setTask({
+                            title: todo.title,
+                            description: todo.description,
+                            completed: todo.completed,
+                            id: todo?.id,
+                          });
+                        }}
+                      >
+                        Edit
+                      </button>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
         ) : (
           ""
         )}
